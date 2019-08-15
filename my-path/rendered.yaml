@@ -82,9 +82,21 @@ spec:
         - --listen-metrics=:3031
         image: docker.io/fluxcd/flux:1.13.3
         imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /api/flux/v6/identity.pub
+            port: 3030
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
         name: flux
         ports:
         - containerPort: 3030
+        readinessProbe:
+          httpGet:
+            path: /api/flux/v6/identity.pub
+            port: 3030
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
         resources:
           requests:
             cpu: 50m
@@ -140,19 +152,18 @@ kind: Collector
 metadata:
   name: collector-sample
 spec:
-- clusterInfo: {}
-- clusterResources: {}
 - secret:
-    key: mysql-password
-    name: illmannered-cricket-mysql
+    includeValue: false
+    key: uri
+    name: myapp-postgres
     namespace: default
 - logs:
     limits:
       maxAge: 30d
       maxLines: 10000
-    namespace: default
+    namespace: kube-system
     selector:
-    - name=nginx-ingress-microk8s
+    - name=cilium-operator
 - run:
     args:
     - www.google.com
@@ -163,11 +174,9 @@ spec:
     namespace: default
     timeout: 5s
 - http:
-    collectorName: test-get
+    collectorName: echo-ip
     get:
-      headers: {}
-      insecureSkipVerify: false
-      url: https://api.staging.replicated.com/market/v1/echo/ip
+      url: https://api.replicated.com/market/v1/echo/ip
 ---
 apiVersion: troubleshoot.replicated.com/v1beta1
 kind: Preflight
@@ -187,12 +196,14 @@ spec:
           when: < 1.15.0
       - pass:
           message: Your cluster meets the recommended and required versions of Kubernetes.
+          when: '>= 1.15.0'
   - customResourceDefinition:
-      checkName: Gatekeeper policy runtime is installed
+      checkName: Gatekeeper policy runtime
       customResourceDefinitionName: constrainttemplates.templates.gatekeeper.sh
       outcomes:
       - fail:
           message: Gatekeeper is required for the application, but not found in the cluster.
+          uri: https://enterprise.support.io/installing/gatekeeper
       - pass:
           message: Found a supported version of Gatekeeper installed and running in the cluster.
   - imagePullSecret:
@@ -201,6 +212,24 @@ spec:
       - fail:
           message: |
             Cannot pull from quay.io. An image pull secret should be deployed to the cluster that has credentials to pull the images. To obtain this secret, please contact your support rep.
+          uri: https://enterprise.support.io/installing/registry-credentials
       - pass:
           message: Found credentials to pull from quay.io
       registryName: quay.io
+  - secret:
+      checkName: Postgres connection string
+      key: uri
+      namespace: default
+      outcomes:
+      - fail:
+          message: A secret named "myapp-postgres" must be deployed with a "uri" key
+          uri: https://enterprise.support.io/installing/postgres
+      - pass:
+          message: Found a valid postgres connection string
+      secretName: myapp-postgres
+  collectors:
+  - secret:
+      includeValue: false
+      key: uri
+      name: myapp-postgres
+      namespace: default
