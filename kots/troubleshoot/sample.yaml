@@ -33,4 +33,4 @@ spec:
         image: flungo/netutils
         command: ["netstat"]
         args: ["-n","-a"]
-        timeout: 5s
+        timeout: 30s
