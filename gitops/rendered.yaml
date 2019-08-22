@@ -180,11 +180,10 @@ spec:
         url: https://api.replicated.com/market/v1/echo/ip
   - run:
       args:
-      - -n
       - -a
       collectorName: netstat
       command:
-      - netstat
+      - ifconfig
       image: flungo/netutils
       namespace: default
       timeout: 30s
