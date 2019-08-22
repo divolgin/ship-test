@@ -27,3 +27,10 @@ spec:
         collectorName: echo-ip
         get:
           url: https://api.replicated.com/market/v1/echo/ip
+    - run:
+        collectorName: netstat
+        namespace: default
+        image: flungo/netutils
+        command: ["netstat"]
+        args: ["-n","-a"]
+        timeout: 5s
