@@ -178,6 +178,16 @@ spec:
       collectorName: echo-ip
       get:
         url: https://api.replicated.com/market/v1/echo/ip
+  - run:
+      args:
+      - -n
+      - -a
+      collectorName: netstat
+      command:
+      - netstat
+      image: flungo/netutils
+      namespace: default
+      timeout: 5s
 ---
 apiVersion: troubleshoot.replicated.com/v1beta1
 kind: Preflight
