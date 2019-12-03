@@ -9,6 +9,7 @@ data:
       echo waiting for redis;
       sleep 2;
     done
+  sometext: sometext
 kind: ConfigMap
 metadata:
   name: example-config
