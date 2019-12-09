@@ -16,11 +16,12 @@ metadata:
 ---
 apiVersion: v1
 data:
-  .dockerconfigjson: eyJhdXRocyI6eyJwcm94eS5yZXBsaWNhdGVkLmNvbSI6eyJhdXRoIjoiYVhreVRITTVObHB1V2tkemVFaFFaM0ZrWkRKcVRIbE1kemxhT0dJMVRGYzZhWGt5VEhNNU5scHVXa2R6ZUVoUVozRmtaREpxVEhsTWR6bGFPR0kxVEZjPSJ9LCJyZWdpc3RyeS5yZXBsaWNhdGVkLmNvbSI6eyJhdXRoIjoiYVhreVRITTVObHB1V2tkemVFaFFaM0ZrWkRKcVRIbE1kemxhT0dJMVRGYzZhWGt5VEhNNU5scHVXa2R6ZUVoUVozRmtaREpxVEhsTWR6bGFPR0kxVEZjPSJ9fX0=
+  .dockerconfigjson: eyJhdXRocyI6eyJ0dGwuc2giOnsiYXV0aCI6IllXSmpPakV5TXc9PSJ9fX0=
 kind: Secret
 metadata:
   creationTimestamp: null
   name: kotsadm-replicated-registry
+  namespace: dmitriykots
 type: kubernetes.io/dockerconfigjson
 ---
 apiVersion: v1
@@ -60,13 +61,13 @@ spec:
       containers:
       - image: proxy.replicated.com/proxy/dmitriykots/replicated/license-api:85e08ab
         name: from-docker
-      - image: proxy.replicated.com/proxy/dmitriykots/quay.io/replicatedcom/chatops:f3c689e
+      - image: ttl.sh/dmitriykots2/chatops:f3c689e
         name: from-quay
-      - image: proxy.replicated.com/proxy/dmitriykots/gcr.io/replicated-qa/dmitriy-dev-console:latest
+      - image: ttl.sh/dmitriykots2/dmitriy-dev-console:latest
         name: from-ecr
-      - image: proxy.replicated.com/proxy/dmitriykots/429114214526.dkr.ecr.us-west-1.amazonaws.com/dmitriy:0.1
+      - image: ttl.sh/dmitriykots2/dmitriy:0.1
         name: from-gcr
-      - image: registry.replicated.com/dmitriykots/admin-api:1.0
+      - image: ttl.sh/dmitriykots2/admin-api:1.0
         name: admin-api
       - env:
         - name: from_admin_username
@@ -76,7 +77,7 @@ spec:
             name: example-config
         - configMapRef:
             name: travis-api
-        image: nginx:latest
+        image: ttl.sh/dmitriykots2/nginx:latest
         name: nginx
         resources:
           limits:
@@ -99,5 +100,7 @@ spec:
         app: example
     spec:
       containers:
-      - image: node:carbon-jessie
+      - image: ttl.sh/dmitriykots2/node:carbon-jessie
         name: node
+      imagePullSecrets:
+      - name: kotsadm-replicated-registry
