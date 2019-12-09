@@ -21,7 +21,6 @@ kind: Secret
 metadata:
   creationTimestamp: null
   name: kotsadm-replicated-registry
-  namespace: dmitriykots
 type: kubernetes.io/dockerconfigjson
 ---
 apiVersion: v1
