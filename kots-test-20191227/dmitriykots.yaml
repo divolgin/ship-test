@@ -124,6 +124,8 @@ spec:
         env:
         - name: SENTRY_REDIS_HOST
           value: sentry-redis-master
+        - name: KEY1
+          value: val1
         image: alpine:latest
         name: example-init-job
       restartPolicy: Never
